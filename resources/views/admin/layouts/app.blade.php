@@ -37,7 +37,19 @@
                 {{-- Tambahkan menu lain kalau nanti ada --}}
             </nav>
 
-            <div class="p-4 text-sm border-t border-gray-800">© 2025</div>
+            {{-- Logout Button --}}
+            <div class="p-4">
+                <a href="{{ route('logout') }}"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                    class="block w-full text-left px-4 py-2 rounded bg-red-800 hover:bg-red-700 transition duration-200 ease-in-out text-sm">
+                    🚪 Logout
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                    @csrf
+                </form>
+            </div>
+
+            <div class="p-4 text-sm border border-gray-800">© 2025</div>
         </aside>
 
         {{-- Main Content --}}

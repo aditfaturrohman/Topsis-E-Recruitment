@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Page Rekrutmen</title>
+    <title>Landing Page Rekrutmen Coffee Kane</title> {{-- Ubah Judul Halaman --}}
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Optional: Konfigurasi Tailwind jika diperlukan, misal untuk font Poppins
         tailwind.config = {
             theme: {
                 extend: {
@@ -33,35 +33,28 @@
                 duration: 800, // Durasi animasi
             });
 
-            // Script untuk scroll halus (dari resources/js/scroll.js)
+            // Script untuk scroll halus
             document.querySelectorAll('a[data-scroll]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     e.preventDefault();
-
                     const targetId = this.getAttribute('data-scroll');
                     const targetElement = document.getElementById(targetId);
-
                     if (targetElement) {
-                        // Perhitungan offset untuk navbar tetap (sticky header)
-                        const navbarHeight = document.querySelector('nav').offsetHeight;
-                        const offsetTop = targetElement.offsetTop - navbarHeight;
-
-                        window.scrollTo({
-                            top: offsetTop,
-                            behavior: 'smooth'
+                        // Menggunakan scroll-padding-top di CSS adalah cara paling bersih
+                        // Anda bisa menambahkan ini di <style> jika navbar fixed/sticky:
+                        // html { scroll-padding-top: 64px; }
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
                         });
                     }
                 });
             });
-
-            // Script untuk landing.js - Jika ada logic spesifik di dalamnya, perlu disisipkan di sini.
-            // Contoh sederhana:
-            // console.log('Landing page scripts loaded.');
         });
     </script>
 
     <style>
-        /* Scrollbar minimalis (dari kode navbar) */
+        /* Scrollbar minimalis */
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
@@ -75,15 +68,22 @@
             /* gray-500 semi transparan */
             border-radius: 3px;
         }
+
+        /* Penting untuk Alpine.js x-cloak (jika Anda masih menggunakan Alpine untuk fitur lain) */
+        [x-cloak] {
+            display: none !important;
+        }
     </style>
 </head>
 
 <body class="bg-white font-[Poppins]">
+    {{-- Navbar --}}
     <nav
         class="absolute w-full px-6 md:px-20 py-3 pt-8 h-16 flex items-center justify-between top-0 z-50
-            bg-transparent transition-all duration-300">
+            bg-transparent shadow-none transition-all duration-300">
 
-        <a href="#" class="text-xl font-bold text-white hover:text-blue-200 transition-colors duration-300">
+        <a href="{{ route('welcome') }}"
+            class="text-xl font-bold text-white hover:text-blue-200 transition-colors duration-300">
             Coffee Kane
         </a>
 
@@ -101,12 +101,29 @@
         </div>
 
         <div class="flex items-center space-x-2">
-            <a href="#"
-                class="px-4 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-gray-800 transition-colors duration-300">Login</a>
-            <a href="#"
-                class="px-4 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-gray-800 transition-colors duration-300">Register</a>
+            @guest
+                <a href="{{ route('login') }}"
+                    class="px-4 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-gray-800 transition-colors duration-300">Login</a>
+                <a href="{{ route('register') }}"
+                    class="px-4 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-gray-800 transition-colors duration-300">Register</a>
+            @else
+                <a href="{{ url('/dashboard') }}"
+                    class="px-4 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-gray-800 transition-colors duration-300">
+                    Dashboard
+                </a>
+                <a href="{{ route('logout') }}"
+                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                    class="px-4 py-2 text-white border border-white rounded-lg hover:bg-white hover:text-gray-800 transition-colors duration-300">
+                    Logout
+                </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                    @csrf
+                </form>
+            @endguest
         </div>
     </nav>
+
+    {{-- Section Hero --}}
     <section id="beranda" class="relative bg-cover bg-center min-h-[100vh] text-white"
         style="background-image: url('/images/coffeshop.jpg');">
         <div class="absolute inset-0 bg-black bg-opacity-70"></div>
@@ -118,7 +135,7 @@
             <p class="text-md md:text-xl mb-6 max-w-xl" data-aos="fade-up" data-aos-delay="200">
                 Coffee Kane membuka kesempatan bagi Anda untuk bertumbuh dan meraih puncak karier yang Anda impikan.
             </p>
-            <a href="#" data-scroll="lowongan"
+            <a href="{{ route('login') }}" {{-- Link langsung ke halaman login --}}
                 class="inline-flex items-center gap-2 px-8 py-3 bg-blue-900 hover:bg-blue-800 text-white font-semibold rounded-full text-lg transition-all duration-300"
                 data-aos="fade-up" data-aos-delay="400">
                 Lamar Sekarang
@@ -131,6 +148,7 @@
         </div>
     </section>
 
+    {{-- Section Tentang Perusahaan --}}
     <section id="tentang" class="py-24 bg-white">
         <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
 
@@ -140,7 +158,7 @@
                     Tentang <span class="text-black">Perusahaan</span>
                 </h2>
                 <p class="text-gray-700 text-lg leading-relaxed mb-4 text-justify">
-                    PT <span class="text-blue-600 font-semibold">Coffe Kane</span> adalah sebuah destinasi, tempat
+                    PT <span class="text-blue-600 font-semibold">Coffee Kane</span> adalah sebuah destinasi, tempat
                     setiap biji kopi dikurasi dengan hati, di-roast dengan <span
                         class="text-blue-600 font-semibold">keahlian</span> dan disajikan dengan passion untuk
                     menciptakan pengalaman yang tak terlupakan."
@@ -150,7 +168,7 @@
                     kenyamanan, dan setiap secangkir kopi menjadi
                     <span class="text-blue-600 font-semibold">katalis untuk koneksi</span> dan ide-ide baru
                 </p>
-                <a href="#" data-scroll="lowongan"
+                <a href="{{ route('login') }}" {{-- Link langsung ke halaman login --}}
                     class="inline-block mt-8 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-md transition">
                     Jadilah Bagian dari Kami
                 </a>
@@ -163,6 +181,7 @@
         </div>
     </section>
 
+    {{-- Section Keunggulan --}}
     <section id="keunggulan" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 text-center">
             <h2 class="text-3xl md:text-4xl font-bold mb-12 text-gray-800" data-aos="fade-up">
@@ -192,7 +211,7 @@
                     data-aos-delay="300">
                     <div class="text-5xl mb-4">📈</div>
                     <h3 class="text-xl font-semibold mb-2 text-gray-800">Stabilitas dan Tunjangan</h3>
-                    <p class="text-gray-600 text-sm leading-relaxed">Coffe Kane menawarkan kompensasi kompetitif,
+                    <p class="text-gray-600 text-sm leading-relaxed">Coffee Kane menawarkan kompensasi kompetitif,
                         tunjangan
                         kesehatan,
                         dan program kesejahteraan karyawan.</p>
@@ -201,6 +220,7 @@
         </div>
     </section>
 
+    {{-- Section Lowongan --}}
     <section id="lowongan" class="py-24 bg-white scroll-mt-24">
         <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 text-center">
 
@@ -220,13 +240,13 @@
                     <div>
                         <div class="text-5xl mb-4 text-blue-600">📂</div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2">Akuntan</h3>
-                        <p class="text-sm text-gray-600 mb-4">Coffe Kane</p>
+                        <p class="text-sm text-gray-600 mb-4">Coffee Kane</p>
                         <span
                             class="inline-block bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full mb-4">Fulltime</span>
                     </div>
-                    <a href="#"
+                    <a href="{{ route('login') }}" {{-- Link langsung ke halaman login --}}
                         class="mt-4 inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-xl transition">
-                        lamar Sekarang
+                        Lamar Sekarang
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -240,13 +260,13 @@
                     <div>
                         <div class="text-5xl mb-4 text-blue-600">💻</div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2">Admin</h3>
-                        <p class="text-sm text-gray-600 mb-4">Coffe Kane</p>
+                        <p class="text-sm text-gray-600 mb-4">Coffee Kane</p>
                         <span
                             class="inline-block bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full mb-4">Fulltime</span>
                     </div>
-                    <a href="#"
+                    <a href="{{ route('login') }}" {{-- Link langsung ke halaman login --}}
                         class="mt-4 inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-xl transition">
-                        lamar Sekarang
+                        Lamar Sekarang
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -258,15 +278,15 @@
                 <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 flex flex-col justify-between h-full"
                     data-aos="fade-up" data-aos-delay="200">
                     <div>
-                        <div class="text-5xl mb-4 text-blue-600">👨‍💼</div>
+                        <div class="text-5xl mb-4 text-blue-600">👨‍💼</div> {{-- Emot untuk Manajer Operasional --}}
                         <h3 class="text-xl font-bold text-gray-800 mb-2">Manajer Operasional</h3>
-                        <p class="text-sm text-gray-600 mb-4">Coffe Kane</p>
+                        <p class="text-sm text-gray-600 mb-4">Coffee Kane</p>
                         <span
                             class="inline-block bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full mb-4">Fulltime</span>
                     </div>
-                    <a href="#"
+                    <a href="{{ route('login') }}" {{-- Link langsung ke halaman login --}}
                         class="mt-4 inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-xl transition">
-                        lamar Sekarang
+                        Lamar Sekarang
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -278,15 +298,15 @@
                 <div class="bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition duration-300 flex flex-col justify-between h-full"
                     data-aos="fade-up" data-aos-delay="200">
                     <div>
-                        <div class="text-5xl mb-4 text-blue-600">☕ </div>
+                        <div class="text-5xl mb-4 text-blue-600">☕ </div> {{-- Emot untuk Barista --}}
                         <h3 class="text-xl font-bold text-gray-800 mb-2">Barista</h3>
-                        <p class="text-sm text-gray-600 mb-4">Coffe Kane</p>
+                        <p class="text-sm text-gray-600 mb-4">Coffee Kane</p>
                         <span
                             class="inline-block bg-blue-100 text-blue-600 text-xs font-semibold px-3 py-1 rounded-full mb-4">Fulltime</span>
                     </div>
-                    <a href="#"
+                    <a href="{{ route('login') }}" {{-- Link langsung ke halaman login --}}
                         class="mt-4 inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold py-2 px-4 rounded-xl transition">
-                        lamar Sekarang
+                        Lamar Sekarang
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -300,7 +320,7 @@
         </div>
     </section>
 
-    {{-- alur rekrutmen (dari kode konten) --}}
+    {{-- Section Alur Rekrutmen --}}
     <section id="alur" class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-6 md:px-12 lg:px-24 text-center">
 
@@ -336,21 +356,22 @@
                 <div class="bg-gray-100 p-6 rounded-2xl shadow-md flex flex-col justify-between h-full"
                     data-aos="fade-up" data-aos-delay="400">
                     <div>
-                        <div class="text-4xl font-bold text-blue-600 mb-4">4</div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Wawancara</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">Wawancara langsung dengan HRD dan user terkait
-                            posisi yang
-                            dilamar.</p>
+                        <div class="text-4xl font-bold text-blue-600 mb-4">3</div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Tes Online</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Kandidat mengikuti tes kemampuan dasar dan
+                            psikotes secara
+                            online.</p>
                     </div>
                 </div>
                 {{-- step4 --}}
                 <div class="bg-gray-100 p-6 rounded-2xl shadow-md flex flex-col justify-between h-full"
                     data-aos="fade-up" data-aos-delay="300">
                     <div>
-                        <div class="text-4xl font-bold text-blue-600 mb-4">3</div>
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Seleksi Akhir</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">Tim HR melakukan sleksi akhir berdasarkan
-                            verifikasi berkas dan wawancara</p>
+                        <div class="text-4xl font-bold text-blue-600 mb-4">4</div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">Wawancara</h3>
+                        <p class="text-gray-600 text-sm leading-relaxed">Wawancara langsung dengan HRD dan user terkait
+                            posisi yang
+                            dilamar.</p>
                     </div>
                 </div>
                 {{-- step5 --}}
@@ -370,9 +391,9 @@
         </div>
     </section>
 
-    {{-- Footer (dari komponen footer) --}}
+    {{-- Footer --}}
     <footer class="bg-white border-t border-gray-200 mt-auto p-6 text-center text-sm text-gray-500">
-        &copy; {{ date('Y') }} PT XYZ. All rights reserved.
+        &copy; {{ date('Y') }} PT Coffee Kane. All rights reserved. {{-- Perbaiki nama perusahaan --}}
     </footer>
 
 </body>

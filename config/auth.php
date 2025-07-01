@@ -36,11 +36,29 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
     ],
+
+    'admin' => [
+        'driver' => 'session',
+        'provider' => 'admins',  // Pastikan ada provider untuk admin
+    ],
+],
+
+'providers' => [
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class,
+    ],
+
+    'admins' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class, // Bisa pakai model User yang sama, atau model Admin terpisah
+    ],
+],
+
 
     /*
     |--------------------------------------------------------------------------
